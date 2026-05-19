@@ -1,0 +1,122 @@
+<mat-sidenav-container class="layout-container">
+  <mat-sidenav
+    #drawer
+    class="sidenav"
+    [mode]="isMobile ? 'over' : 'side'"
+    [opened]="!isMobile"
+    [fixedInViewport]="isMobile"
+    [disableClose]="!isMobile"
+  >
+    <div class="brand">
+      <span class="brand-title">CESIZen</span>
+      <span class="brand-subtitle">Bien-être au quotidien</span>
+    </div>
+    <mat-nav-list (click)="closeMenu()">
+      <a mat-list-item routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <mat-icon matListItemIcon>home</mat-icon>
+        <span matListItemTitle>Accueil</span>
+      </a>
+      <a mat-list-item routerLink="/articles" routerLinkActive="active">
+        <mat-icon matListItemIcon>article</mat-icon>
+        <span matListItemTitle>Informations</span>
+      </a>
+      @if (auth.isAuthenticated()) {
+        <a mat-list-item routerLink="/emotions" routerLinkActive="active">
+          <mat-icon matListItemIcon>sentiment_satisfied</mat-icon>
+          <span matListItemTitle>Émotions</span>
+        </a>
+        <a mat-list-item routerLink="/profile" routerLinkActive="active">
+          <mat-icon matListItemIcon>person</mat-icon>
+          <span matListItemTitle>Mon profil</span>
+        </a>
+        @if (auth.isAdmin()) {
+          <a mat-list-item routerLink="/admin/articles" routerLinkActive="active">
+            <mat-icon matListItemIcon>admin_panel_settings</mat-icon>
+            <span matListItemTitle>Admin contenus</span>
+          </a>
+          <a mat-list-item routerLink="/admin/users" routerLinkActive="active">
+            <mat-icon matListItemIcon>group</mat-icon>
+            <span matListItemTitle>Admin utilisateurs</span>
+          </a>
+        }
+      }
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <mat-sidenav-content class="main-content">
+    <mat-toolbar color="primary" class="top-toolbar">
+      @if (isMobile) {
+        <button
+          mat-icon-button
+          type="button"
+          class="menu-button"
+          (click)="toggleMenu()"
+          aria-label="Ouvrir le menu"
+        >
+          <mat-icon>menu</mat-icon>
+        </button>
+      }
+      <span class="toolbar-greeting">
+        @if (auth.currentUser(); as user) {
+          <span class="greeting-full">Bienvenue, {{ user.firstName }}</span>
+          <span class="greeting-short">{{ user.firstName }}</span>
+        } @else {
+          CESIZen
+        }
+      </span>
+      <span class="spacer"></span>
+      @if (auth.isAuthenticated()) {
+        <button mat-button class="logout-desktop" (click)="auth.logout()">Déconnexion</button>
+        <button
+          mat-icon-button
+          type="button"
+          class="logout-mobile"
+          (click)="auth.logout()"
+          aria-label="Déconnexion"
+        >
+          <mat-icon>logout</mat-icon>
+        </button>
+      } @else {
+        <a mat-button routerLink="/auth/login" class="auth-link-desktop">Connexion</a>
+        <a mat-icon-button routerLink="/auth/login" class="auth-link-mobile" aria-label="Connexion">
+          <mat-icon>login</mat-icon>
+        </a>
+        <a mat-raised-button color="accent" routerLink="/auth/register" class="register-btn">
+          Inscription
+        </a>
+      }
+    </mat-toolbar>
+
+    <main class="content">
+      <router-outlet />
+    </main>
+
+    @if (isMobile) {
+      <nav class="bottom-nav" aria-label="Navigation principale">
+        <a routerLink="/" routerLinkActive="bottom-active" [routerLinkActiveOptions]="{ exact: true }">
+          <mat-icon>home</mat-icon>
+          <span>Accueil</span>
+        </a>
+        <a routerLink="/articles" routerLinkActive="bottom-active">
+          <mat-icon>article</mat-icon>
+          <span>Infos</span>
+        </a>
+        @if (auth.isAuthenticated()) {
+          <a routerLink="/emotions" routerLinkActive="bottom-active">
+            <mat-icon>sentiment_satisfied</mat-icon>
+            <span>Émotions</span>
+          </a>
+          <a routerLink="/profile" routerLinkActive="bottom-active">
+            <mat-icon>person</mat-icon>
+            <span>Profil</span>
+          </a>
+        } @else {
+          <a routerLink="/auth/login" routerLinkActive="bottom-active">
+            <mat-icon>login</mat-icon>
+            <span>Connexion</span>
+          </a>
+        }
+      </nav>
+    }
+  </mat-sidenav-content>
+</mat-sidenav-container>

@@ -1,0 +1,209 @@
+@use '@angular/material' as mat;
+@import 'primeicons/primeicons.css';
+
+:root {
+  --cz-font: 'Plus Jakarta Sans', Roboto, 'Helvetica Neue', sans-serif;
+  --cz-primary: #0d9488;
+  --cz-primary-dark: #0f766e;
+  --cz-primary-light: #ccfbf1;
+  --cz-accent: #0891b2;
+  --cz-bg: #f0fdfa;
+  --cz-bg-elevated: #ffffff;
+  --cz-surface-muted: #f8fafc;
+  --cz-text: #0f172a;
+  --cz-text-muted: #64748b;
+  --cz-border: #e2e8f0;
+  --cz-radius: 16px;
+  --cz-radius-sm: 10px;
+  --cz-shadow: 0 4px 24px rgba(15, 118, 110, 0.08);
+  --cz-shadow-lg: 0 12px 40px rgba(15, 118, 110, 0.12);
+  --cz-space-xs: 0.5rem;
+  --cz-space-sm: 0.75rem;
+  --cz-space-md: 1.25rem;
+  --cz-space-lg: 2rem;
+  --cz-space-xl: 3rem;
+  --cz-line-height: 1.65;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  overflow-x: hidden;
+  font-family: var(--cz-font);
+  font-size: 16px;
+  line-height: var(--cz-line-height);
+  color: var(--cz-text);
+  background: var(--cz-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@include mat.core();
+$cesizen-primary: mat.m2-define-palette(mat.$m2-teal-palette, 600);
+$cesizen-accent: mat.m2-define-palette(mat.$m2-cyan-palette, 600);
+$cesizen-warn: mat.m2-define-palette(mat.$m2-red-palette);
+$cesizen-theme: mat.m2-define-light-theme(
+  (
+    color: (
+      primary: $cesizen-primary,
+      accent: $cesizen-accent,
+      warn: $cesizen-warn,
+    ),
+    typography: mat.m2-define-typography-config($font-family: var(--cz-font)),
+    density: 0,
+  )
+);
+
+@include mat.all-component-themes($cesizen-theme);
+
+/* Page structure */
+.page-header {
+  margin-bottom: var(--cz-space-lg);
+
+  .page-eyebrow {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--cz-primary);
+    background: var(--cz-primary-light);
+    padding: 0.35rem 0.75rem;
+    border-radius: 999px;
+    margin-bottom: var(--cz-space-sm);
+  }
+
+  h1,
+  .page-title {
+    font-size: clamp(1.75rem, 4vw, 2.25rem);
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--cz-text);
+    margin: 0 0 var(--cz-space-xs);
+    letter-spacing: -0.02em;
+  }
+
+  .page-subtitle {
+    font-size: 1.05rem;
+    color: var(--cz-text-muted);
+    margin: 0;
+    max-width: 42rem;
+    line-height: 1.6;
+  }
+}
+
+.cz-card {
+  background: var(--cz-bg-elevated);
+  border-radius: var(--cz-radius);
+  border: 1px solid var(--cz-border);
+  box-shadow: var(--cz-shadow);
+  overflow: hidden;
+}
+
+.cz-card-body {
+  padding: var(--cz-space-md) var(--cz-space-lg);
+}
+
+.mat-mdc-card {
+  border-radius: var(--cz-radius) !important;
+  border: 1px solid var(--cz-border) !important;
+  box-shadow: var(--cz-shadow) !important;
+}
+
+.mat-mdc-card-title {
+  font-weight: 700 !important;
+  letter-spacing: -0.01em !important;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--cz-primary-dark);
+  background: var(--cz-primary-light);
+  padding: 0.3rem 0.65rem;
+  border-radius: 999px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: var(--cz-space-xl) var(--cz-space-md);
+  color: var(--cz-text-muted);
+
+  mat-icon {
+    font-size: 3rem;
+    width: 3rem;
+    height: 3rem;
+    opacity: 0.5;
+    margin-bottom: var(--cz-space-sm);
+  }
+}
+
+button,
+a.mat-mdc-button,
+a.mat-mdc-raised-button,
+.mat-mdc-list-item {
+  touch-action: manipulation;
+}
+
+@media (max-width: 768px) {
+  .mat-mdc-form-field {
+    width: 100%;
+  }
+
+  .page-header {
+    margin-bottom: var(--cz-space-md);
+  }
+
+  .cz-card-body {
+    padding: var(--cz-space-md);
+  }
+
+  .p-datatable-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .p-datatable .p-datatable-table {
+    min-width: 520px;
+  }
+
+  .p-dropdown,
+  .p-inputtext {
+    width: 100%;
+  }
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 440px;
+  margin: 0 auto;
+}
+
+.auth-card .mat-mdc-card-content form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--cz-space-sm);
+}
+
+.auth-card button[type='submit'] {
+  width: 100%;
+  min-height: 48px;
+  margin-top: var(--cz-space-sm);
+  font-weight: 600;
+}

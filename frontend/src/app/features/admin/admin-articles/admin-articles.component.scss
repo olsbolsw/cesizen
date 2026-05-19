@@ -1,0 +1,28 @@
+.form-card {
+  margin-bottom: var(--cz-space-lg);
+}
+
+.form {
+  display: grid;
+  gap: var(--cz-space-sm);
+}
+
+.form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--cz-space-sm);
+  margin-top: var(--cz-space-sm);
+}
+
+.full-width {
+  width: 100%;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.actions-cell {
+  white-space: nowrap;
+}

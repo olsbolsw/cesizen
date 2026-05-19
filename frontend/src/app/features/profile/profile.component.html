@@ -1,0 +1,63 @@
+<header class="page-header">
+  <span class="page-eyebrow">Mon compte</span>
+  <h1 class="page-title">Profil utilisateur</h1>
+  <p class="page-subtitle">Consultez et modifiez vos informations personnelles.</p>
+</header>
+
+@if (user) {
+  <mat-card class="profile-card">
+    <mat-card-header>
+      <mat-card-title>{{ user.firstName }} {{ user.lastName }}</mat-card-title>
+      <mat-card-subtitle>{{ user.email }}</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="label">Rôle</span>
+          <span class="chip">{{ user.role === 'ADMIN' ? 'Administrateur' : 'Utilisateur' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Statut du compte</span>
+          <span [class]="user.active ? 'status-active' : 'status-inactive'">
+            {{ user.active ? 'Actif' : 'Désactivé' }}
+          </span>
+        </div>
+        <div class="info-item">
+          <span class="label">Consentement RGPD</span>
+          <span>{{ user.rgpdConsent ? 'Accepté' : 'Non accepté' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Membre depuis</span>
+          <span>{{ user.createdAt | date: 'longDate' }}</span>
+        </div>
+      </div>
+
+      <h3 class="section-title">Modifier mes informations</h3>
+      <form [formGroup]="form" (ngSubmit)="save()" class="form">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Prénom</mat-label>
+          <input matInput formControlName="firstName" />
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Nom</mat-label>
+          <input matInput formControlName="lastName" />
+        </mat-form-field>
+        <button mat-raised-button color="primary" type="submit">Enregistrer les modifications</button>
+      </form>
+
+      <section class="danger-zone">
+        <h3 class="section-title">Désactivation du compte (RGPD)</h3>
+        <p>
+          La suppression désactive logiquement votre compte : vous ne pourrez plus vous connecter.
+          Vos données restent traitées conformément à notre politique de confidentialité.
+        </p>
+        <button mat-stroked-button color="warn" type="button" class="delete-btn" (click)="confirmDelete()">
+          Désactiver mon compte
+        </button>
+      </section>
+    </mat-card-content>
+  </mat-card>
+}
+
+<p-toast />
+<p-confirmDialog />
