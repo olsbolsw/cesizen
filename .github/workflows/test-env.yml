@@ -1,0 +1,54 @@
+name: Deploy TEST environment
+
+on:
+  workflow_run:
+    workflows: ["Build and publish images"]
+    types: [completed]
+
+permissions:
+  contents: read
+  packages: read
+
+jobs:
+  test-environment:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    environment: test
+    env:
+      APP_VERSION: sha-${{ github.event.workflow_run.head_sha }}
+      BACKEND_IMAGE: ghcr.io/${{ github.repository_owner }}/cesizen-backend
+      FRONTEND_IMAGE: ghcr.io/${{ github.repository_owner }}/cesizen-frontend
+      POSTGRES_DB: cesizen_test
+      POSTGRES_USER: cesizen_test
+      POSTGRES_PASSWORD: ci_only_password
+      JWT_SECRET: ci_only_jwt_secret_ci_only_jwt_secret_ci_only_jwt_secret_123456789
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+      - name: Login to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+
+      - name: Pull test images
+        run: docker compose -f compose.yaml -f compose.test.yaml pull
+
+      - name: Start TEST stack
+        run: docker compose -f compose.yaml -f compose.test.yaml up -d --wait --wait-timeout 180
+
+      - name: Smoke tests
+        run: |
+          chmod +x scripts/smoke-test.sh
+          ./scripts/smoke-test.sh http://localhost:8080 http://localhost:8081
+
+      - name: Container state
+        if: always()
+        run: docker compose -f compose.yaml -f compose.test.yaml ps
+
+      - name: Docker logs on failure
+        if: failure()
+        run: docker compose -f compose.yaml -f compose.test.yaml logs --no-color
+
+      - name: Destroy TEST environment
+        if: always()
+        run: docker compose -f compose.yaml -f compose.test.yaml down -v

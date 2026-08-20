@@ -1,0 +1,5 @@
+<!-- Add inside <dependencies> in backend/pom.xml if Actuator is not already present. -->
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-actuator</artifactId>
+</dependency>

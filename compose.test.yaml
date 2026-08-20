@@ -1,0 +1,17 @@
+services:
+  db:
+    volumes:
+      - postgres_test_data:/var/lib/postgresql/data
+
+  backend:
+    ports:
+      - "127.0.0.1:8081:8081"
+    environment:
+      SPRING_PROFILES_ACTIVE: test
+
+  frontend:
+    ports:
+      - "127.0.0.1:8080:80"
+
+volumes:
+  postgres_test_data:

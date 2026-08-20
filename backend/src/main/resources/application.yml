@@ -1,10 +1,12 @@
 spring:
   application:
     name: cesizen-backend
+
   datasource:
-    url: jdbc:postgresql://localhost:5432/cesizen
-    username: cesizen
-    password: cesizen
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/cesizen}
+    username: ${SPRING_DATASOURCE_USERNAME:cesizen}
+    password: ${SPRING_DATASOURCE_PASSWORD:cesizen}
+
   jpa:
     hibernate:
       ddl-auto: update
@@ -16,15 +18,25 @@ spring:
     open-in-view: false
 
 server:
-  port: 8080
+  port: ${SERVER_PORT:8080}
   error:
     include-message: never
     include-binding-errors: never
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: never
 
 cesizen:
   jwt:
     secret: ${JWT_SECRET:ChangeMeToASecureSecretKeyAtLeast256BitsLongForProductionUse1234567890}
     expiration-ms: 86400000
+
   cors:
     allowed-origins: http://localhost:4200
 

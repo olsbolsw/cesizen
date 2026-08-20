@@ -1,0 +1,36 @@
+name: Deploy PROD
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Immutable image tag, e.g. v1.0.0'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Configure SSH
+        env:
+          PROD_SSH_KEY: ${{ secrets.PROD_SSH_KEY }}
+          PROD_HOST: ${{ secrets.PROD_HOST }}
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "$PROD_SSH_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H "$PROD_HOST" >> ~/.ssh/known_hosts
+
+      - name: Deploy selected version
+        env:
+          PROD_HOST: ${{ secrets.PROD_HOST }}
+          PROD_USER: ${{ secrets.PROD_USER }}
+          PROD_PATH: ${{ secrets.PROD_PATH }}
+          VERSION: ${{ inputs.version }}
+        run: |
+          ssh "$PROD_USER@$PROD_HOST" "cd '$PROD_PATH' && sed -i.bak 's/^APP_VERSION=.*/APP_VERSION=$VERSION/' .env.prod && ./scripts/deploy-prod.sh .env.prod"

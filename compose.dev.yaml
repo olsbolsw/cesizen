@@ -1,0 +1,22 @@
+services:
+  db:
+    ports:
+      - "127.0.0.1:5432:5432"
+
+  backend:
+    image: cesizen-backend:dev
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "127.0.0.1:8081:8081"
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+
+  frontend:
+    image: cesizen-frontend:dev
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "4200:80"

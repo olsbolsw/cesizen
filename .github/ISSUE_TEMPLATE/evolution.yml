@@ -1,0 +1,39 @@
+name: Évolution
+about: Proposer une évolution CESIZen
+title: "[EVOLUTION] "
+labels: ["evolution"]
+body:
+  - type: textarea
+    id: need
+    attributes:
+      label: Besoin
+      description: Quel problème ou besoin doit être traité ?
+    validations:
+      required: true
+  - type: textarea
+    id: value
+    attributes:
+      label: Valeur attendue
+    validations:
+      required: true
+  - type: textarea
+    id: rules
+    attributes:
+      label: Règles de gestion / critères d'acceptation
+    validations:
+      required: true
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priorité métier
+      options: [Critique, Forte, Normale, Basse]
+    validations:
+      required: true
+  - type: textarea
+    id: impacts
+    attributes:
+      label: Impacts techniques envisagés
+  - type: input
+    id: target
+    attributes:
+      label: Version cible estimée
