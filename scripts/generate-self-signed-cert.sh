@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+mkdir -p certs
+
+docker run --rm \
+  -v "$(pwd)/certs:/certs" \
+  alpine:3.23 sh -c '
+    apk add --no-cache openssl >/dev/null &&
+    openssl req -x509 -nodes -newkey rsa:2048 -days 365 \
+      -keyout /certs/privkey.pem \
+      -out /certs/fullchain.pem \
+      -subj "/CN=localhost" \
+      -addext "subjectAltName=DNS:localhost,IP:127.0.0.1"
+  '
+
+echo "Self-signed demo certificate created in ./certs"

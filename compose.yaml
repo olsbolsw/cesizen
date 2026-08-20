@@ -1,0 +1,56 @@
+name: cesizen
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-cesizen}
+      POSTGRES_USER: ${POSTGRES_USER:-cesizen}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-dev_only_change_me}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-cesizen} -d ${POSTGRES_DB:-cesizen}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - data_net
+
+  backend:
+    image: ${BACKEND_IMAGE:-ghcr.io/olsbolsw/cesizen-backend}:${APP_VERSION:-latest}
+    environment:
+      SERVER_PORT: 8081
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB:-cesizen}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-cesizen}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-dev_only_change_me}
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-docker}
+      JWT_SECRET: ${JWT_SECRET:-dev_only_change_me_dev_only_change_me_dev_only_change_me_1234567890}
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:8081/actuator/health | grep -q '\"status\":\"UP\"'"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 25s
+    networks:
+      - app_net
+      - data_net
+
+  frontend:
+    image: ${FRONTEND_IMAGE:-ghcr.io/olsbolsw/cesizen-frontend}:${APP_VERSION:-latest}
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - app_net
+
+volumes:
+  postgres_data:
+
+networks:
+  app_net:
+  data_net:
+    internal: true

@@ -1,0 +1,33 @@
+name: Release images
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  tag-release:
+    runs-on: ubuntu-latest
+    env:
+      BACKEND_IMAGE: ghcr.io/${{ github.repository_owner }}/cesizen-backend
+      FRONTEND_IMAGE: ghcr.io/${{ github.repository_owner }}/cesizen-frontend
+    steps:
+      - name: Login to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+
+      - name: Promote tested SHA images to semantic version
+        env:
+          VERSION: ${{ github.ref_name }}
+          SHA: ${{ github.sha }}
+        run: |
+          docker pull "$BACKEND_IMAGE:sha-$SHA"
+          docker tag "$BACKEND_IMAGE:sha-$SHA" "$BACKEND_IMAGE:$VERSION"
+          docker push "$BACKEND_IMAGE:$VERSION"
+
+          docker pull "$FRONTEND_IMAGE:sha-$SHA"
+          docker tag "$FRONTEND_IMAGE:sha-$SHA" "$FRONTEND_IMAGE:$VERSION"
+          docker push "$FRONTEND_IMAGE:$VERSION"
