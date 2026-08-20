@@ -1,8 +1,0 @@
-# Bloc 3 infrastructure secrets / generated files
-.env
-.env.*
-!.env.example
-certs/
-backups/
-*.pem
-*.key
