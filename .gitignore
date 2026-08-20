@@ -13,3 +13,11 @@ frontend/.angular/
 .vscode/
 *.log
 .DS_Store
+.env
+.env.*
+!.env.example
+certs/
+backups/
+*.pem
+*.key
+ 
