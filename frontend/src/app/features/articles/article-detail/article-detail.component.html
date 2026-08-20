@@ -1,0 +1,50 @@
+<a mat-button routerLink="/articles" class="back-link">
+  <mat-icon>arrow_back</mat-icon>
+  Retour aux articles
+</a>
+
+@if (loading) {
+  <mat-card class="detail-card">
+    <mat-card-content>
+      <p class="loading-text">Chargement de l'article…</p>
+    </mat-card-content>
+  </mat-card>
+} @else if (error) {
+  <mat-card class="detail-card error-card">
+    <mat-card-content>
+      <mat-icon color="warn">error_outline</mat-icon>
+      <p>{{ error }}</p>
+      <a mat-raised-button color="primary" routerLink="/articles">Retour à la liste</a>
+    </mat-card-content>
+  </mat-card>
+} @else if (article) {
+  <article class="detail-card cz-card">
+    <header class="detail-header">
+      @if (article.category) {
+        <span class="chip">{{ article.category }}</span>
+      }
+      <h1>{{ article.title }}</h1>
+      <dl class="detail-meta">
+        <div>
+          <dt>Auteur</dt>
+          <dd>{{ article.authorName }}</dd>
+        </div>
+        <div>
+          <dt>Publié le</dt>
+          <dd>{{ article.createdAt | date: 'longDate' }}</dd>
+        </div>
+        <div>
+          <dt>Dernière mise à jour</dt>
+          <dd>{{ article.updatedAt | date: 'longDate' }}</dd>
+        </div>
+        <div>
+          <dt>Statut</dt>
+          <dd>{{ article.published ? 'Visible' : 'Non publié' }}</dd>
+        </div>
+      </dl>
+    </header>
+    <div class="detail-content">
+      {{ article.content }}
+    </div>
+  </article>
+}

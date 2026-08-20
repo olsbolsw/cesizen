@@ -1,0 +1,82 @@
+<header class="page-header">
+  <span class="page-eyebrow">Back-office · ADMIN</span>
+  <h1 class="page-title">Gestion des contenus</h1>
+  <p class="page-subtitle">Créez, modifiez et publiez les articles visibles sur le front-office.</p>
+</header>
+
+<mat-card class="form-card">
+  <mat-card-header>
+    <mat-card-title>{{ formTitle }}</mat-card-title>
+    <mat-card-subtitle>Les contenus non publiés restent invisibles pour les visiteurs</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <form [formGroup]="form" (ngSubmit)="submit()" class="form">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Titre</mat-label>
+        <input matInput formControlName="title" />
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Catégorie</mat-label>
+        <input matInput formControlName="category" placeholder="ex. Santé mentale" />
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Contenu</mat-label>
+        <textarea matInput rows="6" formControlName="content"></textarea>
+      </mat-form-field>
+      <mat-checkbox formControlName="published">Visible sur le front-office (publié)</mat-checkbox>
+      <div class="form-actions">
+        <button mat-raised-button color="primary" type="submit">
+          {{ editingId ? 'Enregistrer les modifications' : 'Créer le contenu' }}
+        </button>
+        @if (editingId) {
+          <button mat-stroked-button type="button" (click)="cancelEdit()">Annuler</button>
+        }
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>
+
+<div class="table-wrapper">
+  <p-table [value]="articles" [paginator]="true" [rows]="8" [scrollable]="true" scrollDirection="horizontal">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Titre</th>
+        <th>Catégorie</th>
+        <th>Statut</th>
+        <th>Mis à jour</th>
+        <th>Actions</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-article>
+      <tr>
+        <td>{{ article.title }}</td>
+        <td>{{ article.category || '—' }}</td>
+        <td>
+          <p-tag
+            [value]="article.published ? 'Publié' : 'Brouillon'"
+            [severity]="article.published ? 'success' : 'warn'"
+          />
+        </td>
+        <td>{{ article.updatedAt | date: 'short' }}</td>
+        <td class="actions-cell">
+          <button mat-icon-button type="button" (click)="startEdit(article)" aria-label="Modifier">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button
+            mat-icon-button
+            type="button"
+            (click)="togglePublished(article)"
+            [attr.aria-label]="article.published ? 'Masquer' : 'Publier'"
+          >
+            <mat-icon>{{ article.published ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+          <button mat-icon-button type="button" color="warn" (click)="delete(article.id)" aria-label="Supprimer">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<p-toast />

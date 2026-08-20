@@ -1,0 +1,146 @@
+<header class="page-header">
+  <span class="page-eyebrow">Suivi personnel</span>
+  <h1 class="page-title">Tracker d'émotions</h1>
+  <p class="page-subtitle">Enregistrez, modifiez et consultez votre journal émotionnel.</p>
+</header>
+
+@if (emotionTypes.length) {
+  <section class="emotion-legend cz-card">
+    <h3 class="legend-title">Émotions de base disponibles</h3>
+    <ul class="legend-list">
+      @for (type of emotionTypes; track type.code) {
+        <li>
+          <strong>{{ type.label }}</strong>
+          <span>{{ type.description }}</span>
+        </li>
+      }
+    </ul>
+  </section>
+}
+
+<div class="layout">
+  <mat-card class="form-card">
+    <mat-card-title>{{ formTitle }}</mat-card-title>
+    <mat-card-content>
+      <form [formGroup]="form" (ngSubmit)="submit()" class="form-grid">
+        <p-dropdown
+          [options]="emotionOptions"
+          formControlName="emotionType"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Choisir une émotion"
+          styleClass="w-full"
+        />
+
+        <mat-form-field appearance="outline">
+          <mat-label>Intensité (1-10)</mat-label>
+          <input matInput type="number" min="1" max="10" formControlName="intensity" inputmode="numeric" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Date</mat-label>
+          <input matInput type="date" formControlName="entryDate" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>Note (optionnel)</mat-label>
+          <textarea matInput rows="3" formControlName="note"></textarea>
+        </mat-form-field>
+
+        <div class="form-actions">
+          <button mat-raised-button color="primary" type="submit" class="submit-btn">
+            {{ editingEntryId ? 'Mettre à jour' : 'Enregistrer' }}
+          </button>
+          @if (editingEntryId) {
+            <button mat-stroked-button type="button" (click)="cancelEdit()">Annuler</button>
+          }
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  @if (stats && chartData) {
+    <mat-card class="stats-card">
+      <mat-card-title>Répartition (30 jours)</mat-card-title>
+      <mat-card-content>
+        <p class="stats-summary">
+          <span class="stat-item"><strong>{{ stats.totalEntries }}</strong> entrées</span>
+          <span class="stat-item">Moy. intensité : <strong>{{ stats.averageIntensity | number: '1.1-1' }}</strong></span>
+        </p>
+        <div class="chart-wrapper">
+          <p-chart type="doughnut" [data]="chartData" />
+        </div>
+      </mat-card-content>
+    </mat-card>
+  }
+</div>
+
+<section class="table-section">
+  <h3 class="table-title">Historique chronologique</h3>
+
+  <div class="entries-table-desktop">
+    <p-table
+      [value]="entries"
+      [paginator]="true"
+      [rows]="5"
+      [rowsPerPageOptions]="[5, 10]"
+      [scrollable]="true"
+      scrollDirection="horizontal"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Date</th>
+          <th>Émotion</th>
+          <th>Intensité</th>
+          <th>Note</th>
+          <th>Actions</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-entry>
+        <tr>
+          <td>{{ entry.entryDate | date: 'mediumDate' }}</td>
+          <td>{{ labelFor(entry.emotionType) }}</td>
+          <td>{{ entry.intensity }}/10</td>
+          <td>{{ entry.note || '—' }}</td>
+          <td class="actions-cell">
+            <button mat-icon-button type="button" (click)="startEdit(entry)" aria-label="Modifier">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button type="button" color="warn" (click)="deleteEntry(entry.id)" aria-label="Supprimer">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+
+  <div class="entries-cards-mobile">
+    @for (entry of entries; track entry.id) {
+      <mat-card class="entry-card" [class.editing]="editingEntryId === entry.id">
+        <mat-card-content>
+          <div class="entry-card-header">
+            <span class="entry-emotion">{{ labelFor(entry.emotionType) }}</span>
+            <span class="entry-intensity">{{ entry.intensity }}/10</span>
+          </div>
+          <p class="entry-date">{{ entry.entryDate | date: 'mediumDate' }}</p>
+          @if (entry.note) {
+            <p class="entry-note">{{ entry.note }}</p>
+          }
+          <div class="entry-actions">
+            <button mat-stroked-button type="button" (click)="startEdit(entry)">
+              <mat-icon>edit</mat-icon> Modifier
+            </button>
+            <button mat-stroked-button color="warn" type="button" (click)="deleteEntry(entry.id)">
+              <mat-icon>delete</mat-icon> Supprimer
+            </button>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    } @empty {
+      <p class="empty-msg">Aucune entrée pour le moment.</p>
+    }
+  </div>
+</section>
+
+<p-toast />

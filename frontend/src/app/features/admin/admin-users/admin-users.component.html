@@ -1,0 +1,42 @@
+<header class="page-header">
+  <span class="page-eyebrow">Back-office · ADMIN</span>
+  <h1 class="page-title">Gestion des utilisateurs</h1>
+  <p class="page-subtitle">Consultation des comptes et séparation des rôles USER / ADMIN.</p>
+</header>
+
+<mat-card>
+  <mat-card-content>
+    <p-table [value]="users" [paginator]="true" [rows]="10" [scrollable]="true" scrollDirection="horizontal">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Nom</th>
+          <th>Email</th>
+          <th>Rôle</th>
+          <th>Statut</th>
+          <th>RGPD</th>
+          <th>Inscription</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-user>
+        <tr>
+          <td>{{ user.firstName }} {{ user.lastName }}</td>
+          <td>{{ user.email }}</td>
+          <td>
+            <p-tag
+              [value]="roleLabel(user.role)"
+              [severity]="user.role === Role.ADMIN ? 'info' : 'secondary'"
+            />
+          </td>
+          <td>
+            <p-tag
+              [value]="user.active ? 'Actif' : 'Désactivé'"
+              [severity]="user.active ? 'success' : 'danger'"
+            />
+          </td>
+          <td>{{ user.rgpdConsent ? 'Oui' : 'Non' }}</td>
+          <td>{{ user.createdAt | date: 'short' }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </mat-card-content>
+</mat-card>
